@@ -21,7 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -287,6 +289,25 @@ public class DeviceScanActivity extends ListActivity {
 
             return convertView;
         }
+    }
+    //点击Item事件
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+
+       final BluetoothDevice device = mDeviceListAdapter.getDevice(position);
+        if (device == null) return;
+        Intent intent = new Intent(this,DeviceControlActivity.class);
+        Bundle data = new Bundle();
+        data.putString(DeviceControlActivity.EXTRAS_DEVICE_NAME,device.getName());
+        data.putString(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS,device.getAddress());
+        intent.putExtras(data);
+        //跳转前停止扫描
+        if (mScanning == true){
+            mBluetoothLeScanner.stopScan(mScanCallback);
+            mScanning = false;
+        }
+        startActivity(intent);
+
     }
 
     static class ViewHodler{
